@@ -1,5 +1,4 @@
 async def execute(msg, args, client):
-    # print(client.latency)
     await msg.channel.send("pong! {0}ms".format(round(client.latency * 1000))) # client.latency palauttaa viiveen sekunteina
 
 commandData = {
