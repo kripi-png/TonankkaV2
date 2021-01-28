@@ -55,6 +55,6 @@ git remote add upstream https://github.com/kripi-png/TonankkaV2.git
 ```bash
 git fetch upstream
 git checkout main
-git rebase upstream/master
+git rebase upstream/main
 ```
 4. Vastaisuudessa sinun tarvitsee toistaa vain 1. ja 3. vaiheet
