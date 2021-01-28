@@ -6,7 +6,8 @@
 3. Valitse sivuvalikosta Bot ja paina Add Bot -nappia
 4. Voit halutessasi klikata PUBLIC BOT -option pois päältä, mutta tämän ei pitäisi vaikuttaa mihinkään.
 5. Huomaa Copy-nappi Token-otsikon alla. Tulet tarvitsemaan botin tokenia (periaatteess käyttäjänimi ja salasana yhtenä pitkänä merkkijonona) myöhemmin ja sen saa painamalla kyseistä nappia. Tokenia ei saa jakaa muille, aivan kuten et jakaisi omia salasanojasikaan.
-6. Valitse sivuvalikosta OAuth2. Valitse Scopes-listasta bot ja Bot Permissions-kohdasta Administrator. Kopioi linkki listojen välissä ja liitä se osoitepalkkiin. Valitse serveri, jossa haluat bottiasi testata. Voit luoda oman serverin melko helposti. Paina Continue ja sen jälkeen Authorize.
+6. Valitse sivuvalikosta OAuth2. Valitse Scopes-listasta bot ja Bot Permissions-kohdasta Administrator. Kopioi linkki listojen välissä ja liitä se osoitepalkkiin. Valitse serveri, jossa haluat bottiasi testata. Voit luoda oman serverin melko helposti ja nopeasti Discordin sovelluksessa* Paina Continue ja sen jälkeen Authorize.
+7. Serverin luodaksesi, paina Discordin server-listan lopusta +-nappia ja seuraa ohjeita. Mut voi myös invitee sinne myöhemmin jos tulee jotain ongelmia.
 
 
 ## Github ja botin koodi
