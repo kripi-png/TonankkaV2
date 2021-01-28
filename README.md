@@ -30,6 +30,6 @@ py -3 -m pip install -U discord.py
 token = "copy/paste bot token tähän"
 ```
 8. Tallenna tiedosto.
-9. Kirjoita komentokehoitteeseen ```py -3 main.py``` käynnistääksesi botin. Jos ja kun komentokehoitteeseen ilmestyy rivi ´´´We have logged in as [nimi#discriminator]´´´, tiedät botin toimivan. Voit nyt mennä serverillesi ja testata bottia komennolla ```!ping```.
+9. Kirjoita komentokehoitteeseen ```py -3 main.py``` käynnistääksesi botin. Jos ja kun komentokehoitteeseen ilmestyy rivi ```We have logged in as [nimi#discriminator]```, tiedät botin toimivan. Voit nyt mennä serverillesi ja testata bottia komennolla ```!ping```.
 10. Sammuttaaksesi botin, paina CTRL + C ollessasi komentokehoitteessa. Voit käynnistää sen uudelleen komennolla ```py -3 main.py```
 11. Voit nyt muokata tiedostoja haluamasi mukaan. Luodaksesi uuden komennon, voit kopioida esimerkiksi ping.py-tiedoston ja nimetä sen uudelleen. @woope jos tulee ongelmia.
