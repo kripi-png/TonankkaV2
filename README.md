@@ -5,7 +5,7 @@
 2. Anna botille nimi (ie. testibotti)
 3. Valitse sivuvalikosta Bot ja paina Add Bot -nappia
 4. Voit halutessasi klikata PUBLIC BOT -option pois päältä, mutta tämän ei pitäisi vaikuttaa mihinkään.
-5. Huomaa Copy-nappi Token-otsikon alla. Tulet tarvitsemaan botin tokenia (periaatteess käyttäjänimi ja salasana yhtenä pitkänä merkkijonona) myöhemmin ja sen saa painamalla kyseistä nappia. Tokenia ei saa jakaa muille, aivan kuten et jakaisi omia salasanojasikaan.
+5. Huomaa Copy-nappi Token-otsikon alla. Tulet tarvitsemaan botin tokenia (periaatteessa käyttäjänimi ja salasana yhtenä pitkänä merkkijonona) myöhemmin ja sen saa painamalla kyseistä nappia. Tokenia ei saa jakaa muille, aivan kuten et jakaisi omia salasanojasikaan.
 6. Valitse sivuvalikosta OAuth2. Valitse Scopes-listasta bot ja Bot Permissions-kohdasta Administrator. Kopioi linkki listojen välissä ja liitä se osoitepalkkiin. Valitse serveri, jossa haluat bottiasi testata. Voit luoda oman serverin melko helposti ja nopeasti Discordin sovelluksessa* Paina Continue ja sen jälkeen Authorize.
 7. Serverin luodaksesi, paina Discordin server-listan lopusta +-nappia ja seuraa ohjeita. Mut voi myös invitee sinne myöhemmin jos tulee jotain ongelmia.
 
@@ -26,7 +26,7 @@ py -3 -m pip install -U discord.py
 ```
 5. Kirjoita komentokehoitteeseen ```notepad botToken.py``` (case-sensitive) ja vahvista tiedoston luominen.
 6. Käy kopioimassa bottisi token (katso Discord Application -osaa jos et muista miten)
-7. Kirjoita avattuun notepad-ikkunaan seuraava:
+7. Kirjoita avattuun notepad-ikkunaan seuraava (huom! tokenin ympärillä pitää olla lainausmerkit):
 ```
 token = "copy/paste bot token tähän"
 ```
