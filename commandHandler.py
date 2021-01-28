@@ -1,6 +1,6 @@
 import os, importlib
 
-commandList = [x[0:-3] for x in os.listdir('commands') if x.endswith(".py") and x != '__init__.py'] # luo lista kaikkien komentojen nimistä
+commandList = [x[0:-3] for x in os.listdir('commands') if x.endswith(".py") and not x.startswith('_')] # luo lista kaikkien komentojen nimistä
 commands = {}
 
 def loadCommands():
