@@ -21,7 +21,7 @@ async def execute(msg, args):
         else:
             value = randint(int(args[1]), int(args[2])) # the 2 numbers after command defines the range of number generator
 
-    await msg.channel.send("Generated: " + str(value))
+    await msg.channel.send(value)
 
 
 commandData = {
