@@ -12,8 +12,7 @@ async def execute(msg, args):
             value = randint(0, int(args[1])) # will randomize between 0 and given number.
 
     elif not args[1].lstrip("-").isnumeric() or not args[2].lstrip("-").isnumeric(): # if input is not a numeral, will output message
-        await msg.channel.send("Can't randomize numbers from words.")
-        return
+        return await msg.channel.send("Can't randomize numbers from words.")
 
     else:
         if args[2] < args[1]: # checks if second number is smaller than the first one
