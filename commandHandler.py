@@ -7,7 +7,7 @@ def loadCommands():
     print("Loading Commands...")
     for com in commandList:
         commandData = importlib.import_module('commands.{0}'.format(com)).commandData
-        commands[com] = {
+        commands[commandData['name']] = {
             "name": commandData['name'],
             "desc": commandData['description'],
             "execute": commandData['execute'],
