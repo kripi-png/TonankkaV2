@@ -26,5 +26,7 @@ async def execute(msg, args):
 
 commandData = {
     "name": "rng",
+    "author": "jugi",
+    "description": "antaa satunnaisen numeron kahden annetun, tai ennalta määritetyn numeron väliltä",
     "execute": lambda msg,arguments,*args : execute(msg, arguments) # katso ping.py:stä selitys *args-argumentille
 }

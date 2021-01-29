@@ -3,6 +3,8 @@ async def execute(msg, args, client):
 
 commandData = {
     "name": "ping",
+    "author": "kripi",
+    "description": "Palauttaa botin pingin.",
     "execute": lambda msg,arguments,client,*args : execute(msg, arguments, client)  # eri komennot vaativat eri määrän argumentteja
                                                                                     # jos komentoa kutsuttaessa funktiolle annetaan liikaa argumentteja,
                                                                                     # ohjelma palauttaa erroreita. *args muodostaa listan kaikista "ylimääräisistä"

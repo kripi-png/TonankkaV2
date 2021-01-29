@@ -17,11 +17,10 @@ async def on_message(message):
     if not message.content.startswith(settings.commandPrefix): # jos viesti EI ala setings.py-tiedostossa määritetyllä prefixillä, peruuta
         return
 
-    message.content = message.content[1:]
-
+    message.content = message.content[1:] # poista viestistä prefix
     args = message.content.split() # splitataan viestin/komennon sanat välilyönnin kohdalla -> luodaan lista
 
     if( args[0] in commands.keys() ): # jos viestin ensimmäinen sana on jokin komennoista commands-dictionaryssä
-        await commands[args[0]].commandData["execute"](message, args, client) # suorita execute-funktio kutsutun komennon tiedostossa
+        await commands[args[0]]["execute"](message, args, client,commands) # suorita execute-funktio kutsutun komennon tiedostossa
 
 client.run(botToken.token)
