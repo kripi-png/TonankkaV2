@@ -9,17 +9,18 @@ async def execute(msg, args):
     lastDateChecked = datetime.strptime("Sun, 17 Jan 2021 15:00:00 +0000", '%a, %d %b %Y %H:%M:%S %z');
 
     newPatches = [] # luodaan lista, johon uudet merkit kerätään dictionaryna
-    for item in data:
-        convertedDate = datetime.strptime(item["pubDate"], '%a, %d %b %Y %H:%M:%S %z') # muuta merkin julkaisupäivämäärä vertailtavaan muotoon
-        if lastDateChecked < convertedDate: # jos merkki on julkaistu myöhemmin kuin lastDateChecked, on se uusi merkki
-            newPatches.append({"name": item["title"], "date": item["pubDate"], "link": item["link"].split('?')[0]}) # lisätään merkki uusien merkkien listaan
+    for i in range(0,3):
+        print(i)
+        newPatches.append({"name": data[i]["title"], "date": data[i]["pubDate"], "link": data[i]["link"].split('?')[0]}) # lisätään merkki uusien merkkien listaan
+    #     convertedDate = datetime.strptime(item["pubDate"], '%a, %d %b %Y %H:%M:%S %z') # muuta merkin julkaisupäivämäärä vertailtavaan muotoon
+    #     if lastDateChecked < convertedDate: # jos merkki on julkaistu myöhemmin kuin lastDateChecked, on se uusi merkki
 
-    updateMessage = '__**Uusia merkkejä!**__\n'
+    updateMessage = '__**Kolme uusinta merkkiä!**__\n'
+
     for merkki in newPatches:
         updateMessage += "**{}** - {}\n".format(merkki["name"], merkki["link"])
 
     await msg.channel.send(updateMessage)
-
 
 
 commandData = {
