@@ -1,9 +1,10 @@
 import discord
 import settings, botToken
-import commandHandler
+import commandHandler, databaseHandler as db
 
 client = discord.Client()
 commands = commandHandler.loadCommands()
+if not db.existsTable("mainData"): db.createTable("mainData")
 
 @client.event
 async def on_ready():
