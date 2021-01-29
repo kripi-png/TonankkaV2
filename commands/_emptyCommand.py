@@ -4,6 +4,8 @@ async def execute(msg, args):
 
 
 commandData = {
-    "name": "",
+    "name": "test",
+    "description": "desc",
+    "author": "author",
     "execute": lambda msg,arguments,*args : execute(msg, arguments) # katso ping.py:stä selitys *args-argumentille
 }
