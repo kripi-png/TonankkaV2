@@ -2,18 +2,22 @@ import requests, json, xmltodict
 from datetime import datetime # muuten pitäisi käyttää datetime.datetime..., nyt riittää datetime...
 from databaseHandler import *
 
-def convertDateFromRequest(d): return datetime.strptime(d,'%a, %d %b %Y %H:%M:%S %z')
-def convertDateFromDatabase(d): return datetime.strptime(d,"%Y-%m-%d %H:%M:%S %z")
-def convertDateForDatabase(d): return datetime.strftime(d,"%Y-%m-%d %H:%M:%S %z")
+def convertDateFromRequest(d): return datetime.strptime(d.split(' +')[0],'%a, %d %b %Y %H:%M:%S')
+def convertDateFromDatabase(d): return datetime.strptime(d,"%Y-%m-%d %H:%M:%S")
+def convertDateForDatabase(d): return datetime.strftime(d,"%Y-%m-%d %H:%M:%S")
+def createDatabaseEntries(data):
+    data["haalarimerkit"] = {}
+    data["haalarimerkit"]["lastDateChecked"] = convertDateForDatabase(datetime.now())
+    return data
 
 async def execute(msg, args, calledFromOutside=False, client=None): # calledFromOutside is for checking if the code is being run as a command or when the bot boots up
-    # if kwargs:
-    #     calledFromOutside,client = kwargs["calledFromOutside"],kwargs["client"]
     r = requests.get('https://www.merkattu.fi/kauppa/feed/') # requestaa data
     merkkiData = xmltodict.parse(r.text) # muuttaa data xml -> python dictionary
     merkkiData = merkkiData["rss"]["channel"]["item"] # rajaa listasta vain tarvittava tieto (actual merkkilista)
     # merkkiData = merkattu.fi-sivustolta tuleva tieto, dbData = databasesta tuleva tieto
     dbData = readTable("mainData")
+    # jos databasessa ei ole tarvittavaa dataa, luo se
+    if not 'haalarimerkit' in dbData.keys(): dbData = createDatabaseEntries(dbData)
     # päivämäärä ja kellonaika, jolloin uudet merkit on viimeksi tarkistettu
     lastDateChecked = convertDateFromDatabase(dbData["haalarimerkit"]["lastDateChecked"])
     newPatches = [] # luodaan lista, johon uudet merkit kerätään dictionaryna
@@ -40,10 +44,10 @@ async def execute(msg, args, calledFromOutside=False, client=None): # calledFrom
 
     if newCount > 0 and calledFromOutside: # jos komentoa kutsutaan käynnistyksen yhteydessä, msg on general channelin ID
         await client.get_channel(msg).send(updateMessage)
-    else:
+    elif not calledFromOutside:
         await msg.channel.send(updateMessage)
 
-    dbData["haalarimerkit"]["lastDateChecked"] = convertDateForDatabase(datetime.now())+'+0000'
+    dbData["haalarimerkit"]["lastDateChecked"] = convertDateForDatabase(datetime.now())
     writeTable("mainData", dbData)
 
 
