@@ -6,17 +6,22 @@ client = discord.Client()
 commands = commandHandler.loadCommands()
 if not db.existsTable("mainData"): db.createTable("mainData")
 
+async def runStartUpTasks():
+    # check for new patches and post them on the general chat if there are any
+    # (x,y) x = server id, y = channel id
+    await commands["haalarimerkit"]["execute"](settings.generalChannelID, None, calledFromOutside=True, client=client)
+
 @client.event
 async def on_ready():
+    print("Running Start Up tasks")
+    await runStartUpTasks()
+    print("All done!")
     print('We have logged in as {0.user}'.format(client)) # lähetä viesti konsoliin, kun botti käynnistyy
 
 @client.event
 async def on_message(message):
-    if message.author == client.user: # estä bottia vastaamsta itselleen, jos viestin lähettäjä on sama kuin botti
-        return
-
-    if not message.content.startswith(settings.commandPrefix): # jos viesti EI ala setings.py-tiedostossa määritetyllä prefixillä, peruuta
-        return
+    if message.author == client.user: return # estä bottia vastaamsta itselleen, jos viestin lähettäjä on sama kuin botti
+    if not message.content.startswith(settings.commandPrefix): return # jos viesti EI ala settings.py-tiedostossa määritetyllä prefixillä, peruuta
 
     message.content = message.content[1:] # poista viestistä prefix
     args = message.content.split() # splitataan viestin/komennon sanat välilyönnin kohdalla -> luodaan lista
