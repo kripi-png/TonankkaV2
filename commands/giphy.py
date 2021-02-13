@@ -4,7 +4,7 @@ from random import randint
 async def execute(msg, args):
     hakuSanat = "+".join(args[1:]) # luo muuttujan hakuSanat ja antaa sille arvoiksi käytetyt hakusanat
     # hakee Giphy:stä hakusanoilla linkkejä
-    r = requests.get("http://api.giphy.com/v1/gifs/search?api_key=dc6zaTOxFJmzC&q={0}&limit=10".format(hakuSanat))
+    r = requests.get("https://api.giphy.com/v1/gifs/search?api_key=dc6zaTOxFJmzC&q={0}&limit=10".format(hakuSanat))
 
     data = r.json()["data"] # polku data kansioon asti
 
