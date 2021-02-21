@@ -1,6 +1,6 @@
 import json, os
 
-def getFile(name): return "database/{}.txt".format(name) # for this file only
+def getFile(name): return "database/{}.json".format(name) # for this file only
 def existsTable(name): return os.path.exists(getFile(name)) # check if a table with given name already exists
 
 def createTable(name, overwrite=False):
@@ -8,7 +8,7 @@ def createTable(name, overwrite=False):
     # if file with the same name already exists and user has not specified
     # whether or not they wish to overwrite the file, raise an error
     if os.path.exists(getFile(name)) and not overwrite:
-        raise(Exception("A database with name {} already exists. ".format(name+'.txt') + \
+        raise(Exception("A database with name {} already exists. ".format(name+'.json') + \
                         "If you wish to overwrite this database, " + \
                         "add 'overwrite=True' into the createTable-function as an argument."))
 
@@ -18,7 +18,7 @@ def createTable(name, overwrite=False):
 
 def removeTable(name):
     if not os.path.exists(getFile(name)): # fails if there's no databases with given name
-        raise(Exception("No database with name {} found.".format(name+'.txt')))
+        raise(Exception("No database with name {} found.".format(name+'.json')))
     os.remove(getFile(name)) # delete the database file
 
 def readTable(name): # returns all the data from the file

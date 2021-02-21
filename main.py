@@ -4,7 +4,7 @@ import commandHandler, databaseHandler as db
 
 client = discord.Client()
 commands = commandHandler.loadCommands()
-if not db.existsTable("mainData"): db.createTable("mainData")
+if not db.existsTable("haalarimerkit"): db.createTable("haalarimerkit")
 
 async def runStartUpTasks():
     # check for new patches and post them on the general chat if there are any

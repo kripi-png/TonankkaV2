@@ -15,7 +15,7 @@ async def execute(msg, args, calledFromOutside=False, client=None): # calledFrom
     merkkiData = xmltodict.parse(r.text) # muuttaa data xml -> python dictionary
     merkkiData = merkkiData["rss"]["channel"]["item"] # rajaa listasta vain tarvittava tieto (actual merkkilista)
     # merkkiData = merkattu.fi-sivustolta tuleva tieto, dbData = databasesta tuleva tieto
-    dbData = readTable("mainData")
+    dbData = readTable("haalarimerkit")
     # jos databasessa ei ole tarvittavaa dataa, luo se
     if not 'haalarimerkit' in dbData.keys(): dbData = createDatabaseEntries(dbData)
     # päivämäärä ja kellonaika, jolloin uudet merkit on viimeksi tarkistettu
@@ -48,7 +48,7 @@ async def execute(msg, args, calledFromOutside=False, client=None): # calledFrom
         await msg.channel.send(updateMessage)
 
     dbData["haalarimerkit"]["lastDateChecked"] = convertDateForDatabase(datetime.now())
-    writeTable("mainData", dbData)
+    writeTable("haalarimerkit", dbData)
 
 
 commandData = {
