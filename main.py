@@ -13,7 +13,7 @@ async def changePresence():
     dbData = db.readTable("activities")
     activityToBeSet = random.choice(dbData)
     print(activityToBeSet)
-    game = discord.Game(activityToBeSet['title'])
+    game = discord.Game(activityToBeSet)
     await client.change_presence(activity=game)
 
 async def runStartUpTasks():
