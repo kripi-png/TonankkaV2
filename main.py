@@ -8,7 +8,7 @@ client = discord.Client()
 commands = commandHandler.loadCommands()
 if not db.existsTable("haalarimerkit"): db.createTable("haalarimerkit")
 
-@tasks.loop(minutes=5.0)
+@tasks.loop(hours=1.0)
 async def changePresence():
     dbData = db.readTable("activities")
     activityToBeSet = random.choice(dbData)
