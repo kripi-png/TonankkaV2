@@ -12,7 +12,6 @@ if not db.existsTable("haalarimerkit"): db.createTable("haalarimerkit")
 async def changePresence():
     dbData = db.readTable("activities")
     activityToBeSet = random.choice(dbData)
-    print(activityToBeSet)
     game = discord.Game(activityToBeSet)
     await client.change_presence(activity=game)
 
