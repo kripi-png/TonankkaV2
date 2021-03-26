@@ -1,6 +1,7 @@
 import discord
 import random
 from discord.ext import tasks
+from timedEvents import haalarimerkit
 import settings, botToken
 import commandHandler, databaseHandler as db
 
@@ -9,21 +10,19 @@ commands = commandHandler.loadCommands()
 if not db.existsTable("haalarimerkit"): db.createTable("haalarimerkit")
 
 @tasks.loop(hours=1.0)
-async def changePresence():
+async def timedEventLoop():
     dbData = db.readTable("activities")
     activityToBeSet = random.choice(dbData)
     game = discord.Game(activityToBeSet)
     await client.change_presence(activity=game)
+    await haalarimerkit.postNewPatches(client)
 
 async def runStartUpTasks():
-    # check for new patches and post them on the general chat if there are any
-    # (x,y) x = server id, y = channel id
-    await commands["haalarimerkit"]["execute"](settings.generalChannelID, None, calledFromOutside=True, client=client)
-    changePresence.start() # start the loop
+    print("Running Start Up tasks...")
+    timedEventLoop.start() # start the loop
 
 @client.event
 async def on_ready():
-    print("Running Start Up tasks")
     await runStartUpTasks()
     print("All done!")
     print('We have logged in as {0.user}'.format(client)) # lähetä viesti konsoliin, kun botti käynnistyy
