@@ -1,4 +1,3 @@
-# Made by X
 async def execute(msg, args):
     # await msg.channel.send("Hello!")
 
