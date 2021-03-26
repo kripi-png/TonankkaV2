@@ -1,5 +1,6 @@
 # Made by X
 async def execute(msg, args, client):
+    if len(args[1:]) <= 0: return
     await msg.channel.send(" ".join(args[1:]))
     await msg.delete()
 
