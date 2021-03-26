@@ -60,7 +60,7 @@ async def play(msg, args, client):
         {"name": "Uploader", "value": f"[{info['uploader']}]({info['channel']})", "inline": True},
         {"name": "Duration", "value": str(datetime.timedelta(seconds=info["duration"])), "inline": True},
     ]
-    nowPlayingEmbed = createEmbed(title=t, desc=desc, fields=fields, image=info["thumbnail"])
+    nowPlayingEmbed = createEmbed(title=t, desc=desc, fields=fields, thumbnail=info["thumbnail"])
 
     if not is_connected(msg, client): voice_client = await channel.connect()
     else: voice_client = discord.utils.get(client.voice_clients, guild=msg.guild)
@@ -71,7 +71,7 @@ async def play(msg, args, client):
 
 commandData = {
     "name": "play",
-    "description": "Soita linkattu kappale (!play linkki)",
+    "description": "Soita kappale (!play [linkki/hakusanay])",
     "author": "kripi",
     "execute": lambda msg,arguments,client,*args : play(msg, arguments, client) # katso ping.py:stä selitys *args-argumentille
 }
