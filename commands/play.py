@@ -1,8 +1,11 @@
 import discord
 import os
+import datetime
 
+from utils import createEmbed
 from youtube_dl import YoutubeDL
 
+path = "song.mp3"
 ydl_opts = {
     'format': 'bestaudio/best',
     'noplaylist':'True',
@@ -17,15 +20,19 @@ ydl_opts = {
 def is_connected(msg, client):
     voice_client = discord.utils.get(client.voice_clients, guild=msg.guild)
     return voice_client and voice_client.is_connected()
-def findSongByQuery(query): return query
-def deleteSong(path): os.remove(path)
+
+def endSong(path):
+    os.remove(path)
+    # TODO: next in queues
+
 def download_song(arg, url=True):
     with YoutubeDL(ydl_opts) as ydl:
-        query = f"ytsearch:{arg}" if url else arg
+        query = f"ytsearch:{arg}" if not url else arg
         data = ydl.extract_info(query, download=True)
     return data['entries'][0]
+
 def display_info(data):
-    video_info = {
+    return {
         'title': data['title'],
         'duration': data['duration'],
         'uploader': data['uploader'],
@@ -33,8 +40,6 @@ def display_info(data):
         'url': data['webpage_url'],
         'channel': data['channel_url']
     }
-    for key, val in video_info.items():
-        print(f"{key}: {val}")
 
 async def play(msg, args, client):
     args = " ".join(args[1:])
@@ -42,23 +47,27 @@ async def play(msg, args, client):
     url = True if video_link.startswith("http") else False
 
     if not msg.author.voice:
-        await msg.channel.send("Sinun on oltava äänikanavalla!")
-        return
+        return await msg.channel.send("Sinun on oltava äänikanavalla!")
     else:
         channel = msg.author.voice.channel
 
     data = download_song(video_link, url)
-    # display_info(data) # TODO: use this to send a nice embed message
+    info = display_info(data)
+
+    t = info["title"]
+    desc = info["url"]
+    fields = [
+        {"name": "Uploader", "value": f"[{info['uploader']}]({info['channel']})", "inline": True},
+        {"name": "Duration", "value": str(datetime.timedelta(seconds=info["duration"])), "inline": True},
+    ]
+    nowPlayingEmbed = createEmbed(title=t, desc=desc, fields=fields, image=info["thumbnail"])
 
     if not is_connected(msg, client): voice_client = await channel.connect()
     else: voice_client = discord.utils.get(client.voice_clients, guild=msg.guild)
 
-
-    await msg.channel.send("Now playing: " + args)
-    path = "song.mp3"
-    voice_client.play(discord.FFmpegPCMAudio(path), after=lambda x: deleteSong(path))
+    await msg.channel.send("Now Playing", embed=nowPlayingEmbed)
+    voice_client.play(discord.FFmpegPCMAudio(path), after=lambda x: endSong(path))
     voice_client.source = discord.PCMVolumeTransformer(voice_client.source, 1)
-
 
 commandData = {
     "name": "play",
