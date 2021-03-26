@@ -29,7 +29,7 @@ async def execute(msg, args, calledFromOutside=False, client=None): # calledFrom
             newPatches.append({"name": item["title"], "date": convertedDate, "link": item["link"]})
 
     newCount = len(newPatches)
-    updateMessage = '__**Viimeisimmät merkit: ({})**__\n'.format(str(newCount)+" uutta")
+    updateMessage = '__**Viimeisimmät merkit ({})**__:\n'.format(str(newCount)+" uutta")
 
     if not calledFromOutside: # jos komentoa suoritetaan komentona
         while len(newPatches) < 3: # jos uusia merkkejä on vähemmän kuin 3, täydennetään listaa vanhemmilla
