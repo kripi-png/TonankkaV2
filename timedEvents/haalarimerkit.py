@@ -16,7 +16,7 @@ def toDatabaseTime(d): return datetime.strftime(d,"%Y-%m-%d %H:%M:%S")
 async def postNewPatches(client):
     data = parseData(await getRequestData())
     newPatchLinks = checkForNewPatches(data)
-    if len(newPatches) > 0: print("New patches!")
+    if len(newPatchLinks) > 0: print("New patches!")
     for link in newPatchLinks:
         # print(link)
         productData = await getProductDataByLink(link)
