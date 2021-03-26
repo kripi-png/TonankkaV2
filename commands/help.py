@@ -1,10 +1,6 @@
 async def execute(msg, args, commands):
-    print(commands)
-    await msg.channel.send("**hello** - esittelee Tonankan \n" # creates a list with each command on their own line
-        "**help** - listaa komennot ja niiden selitykset \n"
-        "**ping** - näyttää botin pingin \n"
-        "**rng** - antaa satunnaisen numeron kahden annetun, tai ennalta määritetyn " + \
-        "numeron väliltä")
+    helpMessage = "\n".join([f"**{commands[x]['name']}** - {commands[x]['desc']}" for x in commands])
+    await msg.channel.send(helpMessage)
 
 commandData = {
     "name": "help",
