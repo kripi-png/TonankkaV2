@@ -1,7 +1,7 @@
 import discord
 import random
 from discord.ext import tasks
-from timedEvents import haalarimerkit
+from timedEvents import haalarimerkit, tapahtumat
 from datetime import datetime
 import settings, botToken
 import commandHandler, databaseHandler as db
@@ -22,6 +22,7 @@ async def changePresence():
 async def timedEventLoop():
     print(f"[{datetime.strftime(datetime.now(), '%H:%M')}] Timed Events")
     await changePresence()
+    await tapahtumat.postNewEvents(client)
     await haalarimerkit.postNewPatches(client)
     db.writeTable("database", {"lastEventLoopDateCheck": toDatabaseTime(datetime.now())})
 
