@@ -3,7 +3,10 @@ import discord
 
 # returns an embed message obje ct which can then be sent await msg.channel.send(embed=<embedMuuttuja>)
 def createEmbed(title=None, desc=None, color=defaultEmbedColor, thumbnail=None, image=None, fields=None):
-    embed = discord.Embed(title=title, description=desc, color=color)
+    embed = discord.Embed(title=title, color=color)
+    if desc:
+        embed.description = desc
+
     if thumbnail:
         embed.set_thumbnail(url=thumbnail)
 
