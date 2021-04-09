@@ -1,7 +1,7 @@
 import json, os
 
 def getFile(name): return "database/{}.json".format(name) # for this file only
-def existsTable(name): return os.path.exists(getFile(name)) # check if a table with given name already exists
+def isTable(name): return os.path.exists(getFile(name)) # check if a table with given name already exists
 
 def createTable(name, overwrite=False):
     if not os.path.exists('database/'): os.mkdir('database') # if database folder does not exist, create one

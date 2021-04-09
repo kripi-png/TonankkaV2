@@ -77,8 +77,8 @@ def createProductEmbed(productData, link):
 
     return createEmbed(title=title, desc=f"**{price}**\n{desc}\n[__**Linkki**__]({link})", image=image, color=engineerColor)
 
-def dbRead(): return fromDatabaseTime(readTable("haalarimerkit")["haalarimerkit"]["lastDateChecked"])
+def dbRead(): return fromDatabaseTime(readTable("database")["lastEventLoopDateCheck"])
 def dbSave():
-    dbData = readTable("haalarimerkit")
-    dbData["haalarimerkit"]["lastDateChecked"] = toDatabaseTime(datetime.now())
-    writeTable("haalarimerkit", dbData)
+    dbData = readTable("database")
+    dbData["lastEventLoopDateCheck"] = toDatabaseTime(datetime.now())
+    writeTable("database", dbData)

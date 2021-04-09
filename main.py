@@ -2,19 +2,24 @@ import discord
 import random
 from discord.ext import tasks
 from timedEvents import haalarimerkit
+from datetime import datetime
 import settings, botToken
 import commandHandler, databaseHandler as db
 
 client = discord.Client()
 commands = commandHandler.loadCommands()
-if not db.existsTable("haalarimerkit"): db.createTable("haalarimerkit")
+if not db.isTable("database"): db.createTable("database")
 
-@tasks.loop(hours=1.0)
-async def timedEventLoop():
+async def changePresence():
     dbData = db.readTable("activities")
     activityToBeSet = random.choice(dbData)
     game = discord.Game(activityToBeSet)
     await client.change_presence(activity=game)
+
+@tasks.loop(hours=1.0)
+async def timedEventLoop():
+    print(f"[{datetime.strftime(datetime.now(), '%H:%M')}] Timed Events")
+    await changePresence()
     await haalarimerkit.postNewPatches(client)
 
 async def runStartUpTasks():
