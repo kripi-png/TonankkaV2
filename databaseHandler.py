@@ -22,7 +22,7 @@ def removeTable(name):
     os.remove(getFile(name)) # delete the database file
 
 def readTable(name): # returns all the data from the file
-    with open(getFile(name)) as json_file:
+    with open(getFile(name), encoding='utf-8') as json_file:
         return json.load(json_file)
 
 def writeTable(name, data):
