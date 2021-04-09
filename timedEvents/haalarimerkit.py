@@ -9,9 +9,7 @@ from databaseHandler import *
 
 def fromWeirdTime(n): return datetime.strptime(n,"%a, %d %b %Y %H:%M:%S")
 def toNormalTime(n): return datetime.strftime(n, "%d.%m.%Y @ %H:%M")
-
 def fromDatabaseTime(d): return datetime.strptime(d,"%Y-%m-%d %H:%M:%S")
-def toDatabaseTime(d): return datetime.strftime(d,"%Y-%m-%d %H:%M:%S")
 
 async def postNewPatches(client):
     data = parseData(await getRequestData())
@@ -22,7 +20,6 @@ async def postNewPatches(client):
         productData = await getProductDataByLink(link)
         embed = createProductEmbed(productData, link)
         await client.get_channel(notificationChannelID).send(embed=embed)
-    dbSave()
 
 async def getRequestData():
     r = requests.get('https://www.merkattu.fi/kauppa/feed/')
@@ -78,7 +75,3 @@ def createProductEmbed(productData, link):
     return createEmbed(title=title, desc=f"**{price}**\n{desc}\n[__**Linkki**__]({link})", image=image, color=engineerColor)
 
 def dbRead(): return fromDatabaseTime(readTable("database")["lastEventLoopDateCheck"])
-def dbSave():
-    dbData = readTable("database")
-    dbData["lastEventLoopDateCheck"] = toDatabaseTime(datetime.now())
-    writeTable("database", dbData)

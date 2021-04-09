@@ -6,6 +6,8 @@ from datetime import datetime
 import settings, botToken
 import commandHandler, databaseHandler as db
 
+def toDatabaseTime(d): return datetime.strftime(d,"%Y-%m-%d %H:%M:%S")
+
 client = discord.Client()
 commands = commandHandler.loadCommands()
 if not db.isTable("database"): db.createTable("database")
@@ -21,6 +23,7 @@ async def timedEventLoop():
     print(f"[{datetime.strftime(datetime.now(), '%H:%M')}] Timed Events")
     await changePresence()
     await haalarimerkit.postNewPatches(client)
+    db.writeTable("database", {"lastEventLoopDateCheck": toDatabaseTime(datetime.now())})
 
 async def runStartUpTasks():
     print("Running Start Up tasks...")
