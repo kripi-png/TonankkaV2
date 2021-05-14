@@ -12,7 +12,9 @@ def toDatabaseTime(d): return datetime.strftime(d,"%Y-%m-%d %H:%M:%S")
 
 client = discord.Client()
 commands = commandHandler.loadCommands()
-if not db.isTable("database"): db.createTable("database")
+if not db.isTable("database"):
+    db.createTable("database")
+    db.writeTable("database", {"lastEventLoopDateCheck": toDatabaseTime(datetime.now())})
 
 async def changePresence():
     dbData = db.readTable("activities") # get data from activities.json
