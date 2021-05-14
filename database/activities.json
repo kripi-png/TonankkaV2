@@ -6,6 +6,11 @@
   "Counter Strike: Global Offensive",
   "Minecraft",
   "Genshin Impact",
+  "NieR Replicant ver.1.22474487139",
+  "NieR:Automata",
+  "World of Warcraft Classic",
+  "Stardew Valley",
+  "Terraria",
 
   "around with Python",
   "around with Unity",
@@ -18,10 +23,17 @@
   "Path on Exile",
   "Amoogus",
   "#591",
+  "hewwo sepnwpai",
 
   "HENTAI SNIPER: Middle East",
+  "Microtransaction_Simulator",
 
   "Tonankka Jump",
   "D.E.E.P",
-  "Cards of the Galaxy"
+  "Cards of the Galaxy",
+
+  { "type": "WATCHING", "name": "Shrek 4" },
+  { "type": "WATCHING", "name": "Faith's stream" },
+
+  { "type": "LISTENING", "name": "some weeb opening" }
 ]

@@ -6,6 +6,8 @@ from datetime import datetime
 import settings, botToken
 import commandHandler, databaseHandler as db
 
+activityTypes = { "WATCHING": discord.ActivityType.watching, "LISTENING": discord.ActivityType.listening }
+
 def toDatabaseTime(d): return datetime.strftime(d,"%Y-%m-%d %H:%M:%S")
 
 client = discord.Client()
@@ -13,10 +15,14 @@ commands = commandHandler.loadCommands()
 if not db.isTable("database"): db.createTable("database")
 
 async def changePresence():
-    dbData = db.readTable("activities")
-    activityToBeSet = random.choice(dbData)
-    game = discord.Game(activityToBeSet)
-    await client.change_presence(activity=game)
+    dbData = db.readTable("activities") # get data from activities.json
+    activityToBeSet = random.choice(dbData) # select a random activity from the list
+    if type(activityToBeSet) is str: # all string items in the list are automatically games
+        game = discord.Game(activityToBeSet)
+        await client.change_presence(activity=game) # create discord.Game activity type and set active activity
+    else:
+        # get watching and listening activity types from activityTypes l§ist using "type" value
+        await client.change_presence(activity=discord.Activity(type=activityTypes[activityToBeSet["type"]], name=activityToBeSet["name"]))
 
 @tasks.loop(hours=1.0)
 async def timedEventLoop():
