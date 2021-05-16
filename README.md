@@ -33,9 +33,11 @@ py -3 -m pip install -U discord.py
 token = "copy/paste bot token tähän"
 ```
 8. Tallenna tiedosto.
-9. Kirjoita komentokehoitteeseen ```py -3 main.py``` käynnistääksesi botin. Jos ja kun komentokehoitteeseen ilmestyy rivi ```We have logged in as [nimi#discriminator]```, tiedät botin toimivan. Voit nyt mennä serverillesi ja testata bottia komennolla ```!ping```.
-10. Sammuttaaksesi botin, paina CTRL + C ollessasi komentokehoitteessa. Voit käynnistää sen uudelleen komennolla ```py -3 main.py```
-11. Voit nyt muokata tiedostoja haluamasi mukaan. Luodaksesi uuden komennon, voit kopioida esimerkiksi ping.py-tiedoston ja nimetä sen uudelleen. @woope jos tulee ongelmia.
+9. Kirjoita komentokehoitteeseen ```py -3 main.py``` käynnistääksesi botin.
+10. Käynnistyminen epäonnistuu, ja konsoliin ilmestyy "No module named '[moduulin nimi]'". Kirjoita konsoliin ```pip install [modulin nimi]``` (esim. jos error-viesti on "No module named 'requests'", kirjoita konsoliin ```pip install requests```
+11. Toista vaiheet 9 - 10 kunnes konsoliin ilmestyy teksti ```We have logged in as [nimi#discriminator]```. Voit nyt mennä serverillesi ja testata bottia komennolla ```!ping```.
+12. Sammuttaaksesi botin, paina CTRL + C ollessasi komentokehoitteessa. Voit käynnistää sen uudelleen komennolla ```py -3 main.py```
+13. Voit nyt muokata tiedostoja haluamasi mukaan. Luodaksesi uuden komennon, voit kopioida esimerkiksi ping.py-tiedoston ja nimetä sen uudelleen. @woope jos tulee ongelmia.
 ### Muutosten lähettäminen
 1. Avaa komentokehoite (ellei se ole jo päällä) ja navigoi TonankkaV2 kansioon.
 2. Kirjoita komentokehoitteeseen ```git add *```
