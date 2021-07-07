@@ -22,7 +22,7 @@ async def postNewPatches(client):
         await client.get_channel(notificationChannelID).send(embed=embed)
 
 async def getRequestData():
-    r = requests.get('https://www.merkattu.fi/kauppa/feed/')
+    r = requests.get('https://www.merkattu.fi/tuote-osasto/haalarimerkit/feed/')
     patchData = xmltodict.parse(r.text) # XML -> dictionary
     patchData = patchData["rss"]["channel"]["item"] # go to actual data
     return patchData
