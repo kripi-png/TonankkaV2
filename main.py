@@ -30,9 +30,15 @@ async def changePresence():
 async def timedEventLoop():
     print(f"[{datetime.strftime(datetime.now(), '%H:%M')}] Timed Events")
     await changePresence()
-    await tapahtumat.postNewEvents(client)
-    await haalarimerkit.postNewPatches(client)
-    db.writeTable("database", {"lastEventLoopDateCheck": toDatabaseTime(datetime.now())})
+
+    try:
+        await tapahtumat.postNewEvents(client)
+        await haalarimerkit.postNewPatches(client)
+
+        db.writeTable("database", {"lastEventLoopDateCheck": toDatabaseTime(datetime.now())})
+
+    except Exception as e:
+        raise
 
 async def runStartUpTasks():
     print("Running Start Up tasks...")
