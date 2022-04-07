@@ -11,6 +11,8 @@
   "World of Warcraft Classic",
   "Stardew Valley",
   "Terraria",
+  "Lost Ark",
+  "Malden Ring",
 
   "around with Python",
   "around with Unity",
@@ -30,7 +32,7 @@
   "Cards of the Galaxy",
 
   { "type": "WATCHING", "name": "Shrek 4" },
-  { "type": "WATCHING", "name": "Faith's stream" },
+  { "type": "WATCHING", "name": "Amouranth" },
 
   { "type": "LISTENING", "name": "some weeb opening" }
 ]
