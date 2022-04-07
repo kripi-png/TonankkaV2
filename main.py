@@ -1,30 +1,38 @@
 import discord
 import random
-from discord.ext import tasks
-from timedEvents import haalarimerkit, tapahtumat
+
 from datetime import datetime
-import settings, botToken
+from dateutil.parser import parse
+from discord.ext import tasks
+from timedEvents import haalarimerkit_rewrite, tapahtumat_rewrite
+
+import settings
+import botToken
 import commandHandler, databaseHandler as db
 
-activityTypes = { "WATCHING": discord.ActivityType.watching, "LISTENING": discord.ActivityType.listening }
+activityTypes = { 'WATCHING': discord.ActivityType.watching, 'LISTENING': discord.ActivityType.listening }
 
-def toDatabaseTime(d): return datetime.strftime(d,"%Y-%m-%d %H:%M:%S")
+def get_last_check_date():
+    raw_date = db.readTable('database')['lastEventLoopDateCheck']
+    # remove milliseconds
+    raw_date = raw_date.split('.')[0]
+    return datetime.strptime(raw_date, '%Y-%m-%d %H:%M:%S')
 
 client = discord.Client()
 commands = commandHandler.loadCommands()
-if not db.isTable("database"):
-    db.createTable("database")
-    db.writeTable("database", {"lastEventLoopDateCheck": toDatabaseTime(datetime.now())})
+if not db.isTable('database'):
+    db.createTable('database')
+    db.writeTable('database', {'lastEventLoopDateCheck': datetime.now()})
 
 async def changePresence():
-    dbData = db.readTable("activities") # get data from activities.json
+    dbData = db.readTable('activities') # get data from activities.json
     activityToBeSet = random.choice(dbData) # select a random activity from the list
     if type(activityToBeSet) is str: # all string items in the list are automatically games
         game = discord.Game(activityToBeSet)
         await client.change_presence(activity=game) # create discord.Game activity type and set active activity
     else:
-        # get watching and listening activity types from activityTypes l§ist using "type" value
-        await client.change_presence(activity=discord.Activity(type=activityTypes[activityToBeSet["type"]], name=activityToBeSet["name"]))
+        # get watching and listening activity types from activityTypes list using 'type' value
+        await client.change_presence(activity=discord.Activity(type=activityTypes[activityToBeSet['type']], name=activityToBeSet["name"]))
 
 @tasks.loop(hours=1.0)
 async def timedEventLoop():
@@ -32,13 +40,14 @@ async def timedEventLoop():
     await changePresence()
 
     try:
-        await tapahtumat.postNewEvents(client)
-        await haalarimerkit.postNewPatches(client)
+        check_date = get_last_check_date()
+        await tapahtumat_rewrite.postNewEvents(client, check_date)
+        # await haalarimerkit_rewrite.postNewPatches(client, check_date)
 
-        db.writeTable("database", {"lastEventLoopDateCheck": toDatabaseTime(datetime.now())})
+        db.writeTable('database', {'lastEventLoopDateCheck': datetime.now()})
 
     except Exception as e:
-        raise
+        print(e)
 
 async def runStartUpTasks():
     print("Running Start Up tasks...")
@@ -48,7 +57,7 @@ async def runStartUpTasks():
 async def on_ready():
     await runStartUpTasks()
     print("All done!")
-    print('We have logged in as {0.user}'.format(client)) # lähetä viesti konsoliin, kun botti käynnistyy
+    print(f"We have logged in as {client.user}") # lähetä viesti konsoliin, kun botti käynnistyy
 
 @client.event
 async def on_message(message):
@@ -59,6 +68,6 @@ async def on_message(message):
     args = message.content.split() # splitataan viestin/komennon sanat välilyönnin kohdalla -> luodaan lista
 
     if( args[0] in commands.keys() ): # jos viestin ensimmäinen sana on jokin komennoista commands-dictionaryssä
-        await commands[args[0]]["execute"](message, args, client,commands) # suorita execute-funktio kutsutun komennon tiedostossa
+        await commands[args[0]]['execute'](message, args, client,commands) # suorita execute-funktio kutsutun komennon tiedostossa
 
 client.run(botToken.token)
