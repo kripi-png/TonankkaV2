@@ -2,22 +2,27 @@ import requests
 from datetime import datetime
 from utils import createEmbed
 from databaseHandler import *
-from settings import engineerColor, notificationChannelID
+from settings import engineerColor, notificationChannelID, debugChannelID
 
 KIDE_LOGO = "https://kide.app/content/images/themes/kide/favicon/launcher-icon-4x.png?v=020221"
 
 def getEventImageLink(str): return "https://portalvhdsp62n0yt356llm.blob.core.windows.net/bailataan-mediaitems/" + str;
-def fromWeirdTime(n,format="%Y-%m-%dT%H:%M:%S%z"): return datetime.strptime(n, format)
-def toNormalTime(n): return datetime.strftime(n, "%d.%m.%Y @ %H:%M")
-def fromNormalTime(n): return datetime.strptime(n, "%d.%m.%Y @ %H:%M")
-def toNormalTimeWithoutTime(n): return datetime.strftime(fromNormalTime(n), "%d.%m.%Y")
-def fromDatabaseTime(d): return datetime.strptime(d,"%Y-%m-%d %H:%M:%S")
+def fromFeedTimeformat(n,format="%Y-%m-%dT%H:%M:%S%z"): return datetime.strptime(n, format)
+def toEmbedTimeformat(n): return datetime.strftime(n, "%d.%m.%Y @ %H:%M")
+def fromEmbedtimeformat(n): return datetime.strptime(n, "%d.%m.%Y @ %H:%M")
+def toEmbedTimeformatWithoutTime(n): return datetime.strftime(fromEmbedtimeformat(n), "%d.%m.%Y")
+def fromDatabaseTimeformat(d): return datetime.strptime(d,"%Y-%m-%d %H:%M:%S")
 
 def isNewer(date):
-    """compares 'date' and the date saved in the database, returns true if database time was before"""
-    return fromDatabaseTime(readTable("database")["lastEventLoopDateCheck"]) < date
+    """Compares 'date' and the date saved in the database, returns true if database time was before"""
+    return fromDatabaseTimeformat(readTable("database")["lastEventLoopDateCheck"]) < date
 
 async def postNewEvents(client):
+    """
+    Get a list of all currently listed events, remove unnecessary data from them,
+    check if any of them are new (as in yet to be posted on the Discord channel),
+    create embed messages of them and then post the message
+    """
     r = requests.get("https://api.kide.app/api/products?city=Turku&productType=1")
     data = r.json()["model"] # where the actual data is
     parsed_data = parseData(data) # remove unnecessary stuff and convert timestamps
@@ -26,9 +31,10 @@ async def postNewEvents(client):
         print("New Events!")
         for x in parsed_data:
             embed = createEventEmbed(x)
-            await client.get_channel(notificationChannelID).send(embed=embed)
+            await client.get_channel(debugChannelID).send(embed=embed)
 
 def checkForNewEvents(events):
+    """"""
     new_events = []
     for x in events:
         if isNewer(x["datePublishFrom"]): new_events.append(x)
@@ -67,12 +73,14 @@ def getEventPrice(event):
     # add ticket sale dates if tickets are still for sale
     if price != "**Myynti loppunut** :pensive:":
         # remove time from the timestamp to make the string a bit shorter
-        price += f"\n(Lippuja myydään {toNormalTimeWithoutTime(event['dateSalesFrom'])} - {toNormalTimeWithoutTime(event['dateSalesUntil'])})"
+        price += f"\n(Lippuja myydään {toEmbedTimeformatWithoutTime(event['dateSalesFrom'])} - {toEmbedTimeformatWithoutTime(event['dateSalesUntil'])})"
 
     return price
 
 def parseData(data):
-    parsed_data =[]
+    """For each event, create a new dictionary with only required information in it,
+    make a list of them and return the list"""
+    parsed_data = []
     for e in data:
         entry = {
             'companyName': e['companyName'],
@@ -88,11 +96,11 @@ def parseData(data):
             'eventImageLink': getEventImageLink(e['mediaFilename']),
 
             # convert timestamps from some wacky UTC format
-            'dateSalesFrom': toNormalTime(fromWeirdTime(e['dateSalesFrom'])),
-            'dateSalesUntil': toNormalTime(fromWeirdTime(e['dateSalesUntil'])),
-            'dateActualFrom': toNormalTime(fromWeirdTime(e['dateActualFrom'])),
-            'dateActualUntil': toNormalTime(fromWeirdTime(e['dateActualUntil'])),
-            'datePublishFrom': fromWeirdTime(e['datePublishFrom'][0:19], format="%Y-%m-%dT%H:%M:%S"),
+            'dateSalesFrom': toEmbedTimeformat(fromFeedTimeformat(e['dateSalesFrom'])),
+            'dateSalesUntil': toEmbedTimeformat(fromFeedTimeformat(e['dateSalesUntil'])),
+            'dateActualFrom': toEmbedTimeformat(fromFeedTimeformat(e['dateActualFrom'])),
+            'dateActualUntil': toEmbedTimeformat(fromFeedTimeformat(e['dateActualUntil'])),
+            'datePublishFrom': fromFeedTimeformat(e['datePublishFrom'][0:19], format="%Y-%m-%dT%H:%M:%S"),
         }
         parsed_data.append(entry)
     return parsed_data
