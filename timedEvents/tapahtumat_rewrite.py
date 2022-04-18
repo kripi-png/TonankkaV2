@@ -113,8 +113,11 @@ def format_price(event: Event) -> str:
     elif event.sales_ended:
         price = "**Myynti loppunut** :pensive:"
     else:
-        min_price = format(event.price[0]/100,'.2f')
-        max_price = format(event.price[1]/100,'.2f')
+        if not event.price[0] or not event.price[1]:
+            min_price, max_price = 0, 0
+        else:
+            min_price = format(event.price[0]/100,'.2f')
+            max_price = format(event.price[1]/100,'.2f')
 
         if min_price == max_price:
             price = f":ticket: {min_price}€"
@@ -180,4 +183,4 @@ async def postNewEvents(client, compared_date: datetime) -> None:
         print("New Events!")
         for event in recent_events:
             embed = createEventEmbed(event)
-            await client.get_channel(debugChannelID).send(embed=embed)
+            await client.get_channel(notificationChannelID).send(embed=embed)
