@@ -9,6 +9,7 @@ from timedEvents import haalarimerkit_rewrite, tapahtumat_rewrite
 import settings
 import botToken
 import commandHandler, databaseHandler as db
+from utils import detailed_exc_msg
 
 activityTypes = { 'WATCHING': discord.ActivityType.watching, 'LISTENING': discord.ActivityType.listening }
 
@@ -38,16 +39,16 @@ async def changePresence():
 async def timedEventLoop():
     print(f"[{datetime.strftime(datetime.now(), '%H:%M')}] Timed Events")
     await changePresence()
-
     try:
         check_date = get_last_check_date()
         await tapahtumat_rewrite.postNewEvents(client, check_date)
-        # await haalarimerkit_rewrite.postNewPatches(client, check_date)
-
-        db.writeTable('database', {'lastEventLoopDateCheck': datetime.now()})
+        await haalarimerkit_rewrite.postNewPatches(client, check_date)
 
     except Exception as e:
-        print(e)
+        detailed_exc_msg(e)
+
+    finally:
+        db.writeTable('database', {'lastEventLoopDateCheck': datetime.now()})
 
 async def runStartUpTasks():
     print("Running Start Up tasks...")
