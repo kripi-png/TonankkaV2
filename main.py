@@ -41,8 +41,9 @@ async def timedEventLoop():
     await changePresence()
     try:
         check_date = get_last_check_date()
-        await tapahtumat.postNewEvents(client, check_date)
-        await haalarimerkit.postNewPatches(client, check_date)
+        channel_id = settings.notificationChannelID
+        await tapahtumat.postNewEvents(client, channel_id, check_date)
+        await haalarimerkit.postNewPatches(client, channel_id, check_date)
 
     except Exception as e:
         detailed_exc_msg(e)

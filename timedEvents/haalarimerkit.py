@@ -7,7 +7,6 @@ from dataclasses import dataclass, field
 from dateutil.parser import parse
 
 from utils import createEmbed, detailed_exc_msg
-from settings import engineerColor, notificationChannelID, debugChannelID
 
 MERKATTU_LOGO = 'https://merkattu.fi/wp-content/uploads/Favicon-64x64-1.png'
 
@@ -21,7 +20,7 @@ class Patch:
     image_link: str = field(default=None, repr=False)
     description: str = field(default=None, repr=False)
 
-async def postNewPatches(client, check_date) -> None:
+async def postNewPatches(client, channel_id, check_date) -> None:
     """
     Request a list of patches, re-format/parse the objects,
     filter recent ones, and post them on specified channel.
@@ -35,7 +34,7 @@ async def postNewPatches(client, check_date) -> None:
         print("New Patches!")
         for patch in completed_patch_data:
             embed = create_patch_embed(patch)
-            await client.get_channel(notificationChannelID).send(embed=embed)
+            await client.get_channel(channel_id).send(embed=embed)
 
 async def request_patch_data() -> list:
     """

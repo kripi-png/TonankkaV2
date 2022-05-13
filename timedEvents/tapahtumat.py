@@ -6,7 +6,6 @@ from dateutil.parser import parse
 from dataclasses import dataclass, field
 
 from utils import createEmbed
-from settings import engineerColor, notificationChannelID, debugChannelID
 
 KIDE_LOGO = "https://kide.app/content/images/themes/kide/favicon/launcher-icon-4x.png?v=020221"
 
@@ -168,7 +167,7 @@ def createEventEmbed(event: Event):
 
     return createEmbed(title=title, fields=fields, image=eventImageLink, thumbnail=KIDE_LOGO)
 
-async def postNewEvents(client, compared_date: datetime) -> None:
+async def postNewEvents(client, channel_id, compared_date: datetime) -> None:
     """
     Request a list of recently published events and, if there are any,
     generate and post an embed message on designated Discord channel.
@@ -183,4 +182,4 @@ async def postNewEvents(client, compared_date: datetime) -> None:
         print("New Events!")
         for event in recent_events:
             embed = createEventEmbed(event)
-            await client.get_channel(notificationChannelID).send(embed=embed)
+            await client.get_channel(channel_id).send(embed=embed)
