@@ -4,7 +4,7 @@ import random
 from datetime import datetime
 from dateutil.parser import parse
 from discord.ext import tasks
-from timedEvents import haalarimerkit_rewrite, tapahtumat_rewrite
+from timedEvents import haalarimerkit, tapahtumat
 
 import settings
 import botToken
@@ -41,8 +41,8 @@ async def timedEventLoop():
     await changePresence()
     try:
         check_date = get_last_check_date()
-        await tapahtumat_rewrite.postNewEvents(client, check_date)
-        await haalarimerkit_rewrite.postNewPatches(client, check_date)
+        await tapahtumat.postNewEvents(client, check_date)
+        await haalarimerkit.postNewPatches(client, check_date)
 
     except Exception as e:
         detailed_exc_msg(e)
