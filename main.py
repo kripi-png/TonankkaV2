@@ -11,37 +11,48 @@ import commandHandler
 import databaseHandler as db
 from utils import detailed_exc_msg
 
-activityTypes = { 'WATCHING': discord.ActivityType.watching, 'LISTENING': discord.ActivityType.listening }
-
 def get_last_check_date():
+    """Get date of last event/patch check.
+    Used to check for new events and patches."""
     raw_date = db.readTable('database')['lastEventLoopDateCheck']
     # remove milliseconds
     raw_date = raw_date.split('.')[0]
     return datetime.strptime(raw_date, '%Y-%m-%d %H:%M:%S')
 
-client = discord.Client()
-commands = commandHandler.loadCommands()
-if not db.isTable('database'):
-    db.createTable('database')
-    db.writeTable('database', {'lastEventLoopDateCheck': datetime.now()})
+async def change_bot_status():
+    """Get the list of possible activities containing various games, songs etc.
+    and set one of them as the status."""
+    # get and select a status by random
+    dbData = db.readTable('activities')
+    selected_activity = random.choice(dbData)
 
-async def changePresence():
-    dbData = db.readTable('activities') # get data from activities.json
-    activityToBeSet = random.choice(dbData) # select a random activity from the list
-    if type(activityToBeSet) is str: # all string items in the list are automatically games
-        game = discord.Game(activityToBeSet)
-        await client.change_presence(activity=game) # create discord.Game activity type and set active activity
+    # all string items are games
+    if type(selected_activity) is str:
+        # create discord.Game activity type and set it as status
+        game = discord.Game(selected_activity)
+        await client.change_presence(activity=game)
     else:
-        # get watching and listening activity types from activityTypes list using 'type' value
-        await client.change_presence(activity=discord.Activity(type=activityTypes[activityToBeSet['type']], name=activityToBeSet["name"]))
+        # all activities other than games have a type value
+        # use that value to select corresponding activity type
+        types = {
+            'WATCHING': discord.ActivityType.watching,
+            'LISTENING': discord.ActivityType.listening,
+        }
+        activity = discord.Activity(
+            type = types[selected_activity['type']],
+            name = selected_activity["name"]
+        )
+        await client.change_presence(activity=activity)
 
 @tasks.loop(hours=1.0)
-async def timedEventLoop():
+async def timed_event_loop():
+    """Function that is automatically ran every one hour. Contains
+    calls for the patch and event systems and bot status/presence change."""
     print(f"[{datetime.strftime(datetime.now(), '%H:%M')}] Timed Events")
-    await changePresence()
+    await change_bot_status()
     try:
         check_date = get_last_check_date()
-        channel_id = settings.notificationChannelID
+        channel_id = settings.debugChannelID
         await tapahtumat.postNewEvents(client, channel_id, check_date)
         await haalarimerkit.postNewPatches(client, channel_id, check_date)
 
@@ -51,25 +62,40 @@ async def timedEventLoop():
     finally:
         db.writeTable('database', {'lastEventLoopDateCheck': datetime.now()})
 
-async def runStartUpTasks():
-    print("Running Start Up tasks...")
-    timedEventLoop.start() # start the loop
+# ------- MAIN ---------
+client = discord.Client()
+commands = commandHandler.loadCommands()
+
+# create database file if it does not exist
+if not db.isTable('database'):
+    db.createTable('database')
+    db.writeTable('database', {'lastEventLoopDateCheck': datetime.now()})
 
 @client.event
 async def on_ready():
-    await runStartUpTasks()
+    """Function to be ran automatically once the bot has loaded and logged in."""
+    print("Running Start Up tasks...")
+    # start the event loop
+    timed_event_loop.start()
+
     print("All done!")
-    print(f"We have logged in as {client.user}") # lähetä viesti konsoliin, kun botti käynnistyy
+    print(f"We have logged in as {client.user}")
 
 @client.event
 async def on_message(message):
-    if message.author == client.user: return # estä bottia vastaamsta itselleen, jos viestin lähettäjä on sama kuin botti
-    if not message.content.startswith(settings.commandPrefix): return # jos viesti EI ala settings.py-tiedostossa määritetyllä prefixillä, peruuta
+    """Function for handling new messages."""
+    # prevent the bot from reacting to its own messages
+    if message.author == client.user: return
+    # ignore messages that do not start with the defined command prefix
+    if not message.content.startswith(settings.commandPrefix): return
 
-    message.content = message.content[1:] # poista viestistä prefix
-    args = message.content.split() # splitataan viestin/komennon sanat välilyönnin kohdalla -> luodaan lista
+    # remove prefix and split command to arguments
+    message.content = message.content[1:]
+    args = message.content.split()
 
-    if( args[0] in commands.keys() ): # jos viestin ensimmäinen sana on jokin komennoista commands-dictionaryssä
-        await commands[args[0]]['execute'](message, args, client,commands) # suorita execute-funktio kutsutun komennon tiedostossa
+    # if the command is valid, run the execute function
+    # located in the file of respective command
+    if( args[0] in commands.keys() ):
+        await commands[args[0]]['execute'](message, args, client,commands)
 
 client.run(botToken.token)
