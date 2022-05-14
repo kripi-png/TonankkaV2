@@ -2,13 +2,13 @@ import discord
 import random
 
 from datetime import datetime
-from dateutil.parser import parse
 from discord.ext import tasks
 from timedEvents import haalarimerkit, tapahtumat
 
 import settings
 import botToken
-import commandHandler, databaseHandler as db
+import commandHandler
+import databaseHandler as db
 from utils import detailed_exc_msg
 
 activityTypes = { 'WATCHING': discord.ActivityType.watching, 'LISTENING': discord.ActivityType.listening }
