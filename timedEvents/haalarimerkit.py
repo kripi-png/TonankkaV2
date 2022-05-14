@@ -20,11 +20,11 @@ class Patch:
     image_link: str = field(default=None, repr=False)
     description: str = field(default=None, repr=False)
 
-async def postNewPatches(client, channel_id, check_date) -> None:
+async def postNewPatches(client, channel_id, last_check_date) -> None:
     """Request a list of patches, re-format/parse the objects,
     filter recent ones, and post them on specified channel."""
     parsed_data = parse_data(request_patch_data()) # convert raw data from xml and create Patch objects
-    new_patches = filter_new_patches(parsed_data, check_date) # compare pub date to check_date
+    new_patches = filter_new_patches(parsed_data, last_check_date) # compare pub date to last_check_date
     completed_patch_data = request_additional_data(new_patches) # get price etc.
 
     if len(completed_patch_data) > 0:
@@ -66,10 +66,10 @@ def parse_data(raw_data: list) -> list:
     parsed_data = [create_patch_object(item) for item in raw_data]
     return parsed_data
 
-def filter_new_patches(patch_data: list, compared_date: datetime) -> list:
+def filter_new_patches(patch_data: list, last_check_date: datetime) -> list:
     """Return a list of patches published after given date.
     The date is loaded from the database and passed all the way from main.py."""
-    new_patches = list(filter(lambda patch: patch.publish_date > compared_date, patch_data))
+    new_patches = list(filter(lambda patch: patch.publish_date > last_check_date, patch_data))
     return new_patches
 
 def request_additional_data(patch_data: list) -> list:
