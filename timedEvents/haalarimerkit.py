@@ -8,8 +8,6 @@ from dateutil.parser import parse
 
 from utils import createEmbed, detailed_exc_msg
 
-MERKATTU_LOGO = 'https://merkattu.fi/wp-content/uploads/Favicon-64x64-1.png'
-
 @dataclass
 class Patch:
     """Dataclass used to parse necessary information from the raw data"""
@@ -117,4 +115,5 @@ def create_patch_embed(patch: Patch):
             "value": f"[Merkattu.fi]({web_link})" }
     ]
 
+    MERKATTU_LOGO = 'https://merkattu.fi/wp-content/uploads/Favicon-64x64-1.png'
     return createEmbed(title=title, fields=fields, image=image_link, thumbnail=MERKATTU_LOGO)
