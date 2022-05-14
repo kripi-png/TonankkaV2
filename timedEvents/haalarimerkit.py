@@ -21,30 +21,24 @@ class Patch:
     description: str = field(default=None, repr=False)
 
 async def postNewPatches(client, channel_id, check_date) -> None:
-    """
-    Request a list of patches, re-format/parse the objects,
-    filter recent ones, and post them on specified channel.
-    """
-    parsed_data = parse_data(await request_patch_data()) # convert raw data from xml and create Patch objects
+    """Request a list of patches, re-format/parse the objects,
+    filter recent ones, and post them on specified channel."""
+    parsed_data = parse_data(request_patch_data()) # convert raw data from xml and create Patch objects
     new_patches = filter_new_patches(parsed_data, check_date) # compare pub date to check_date
     completed_patch_data = request_additional_data(new_patches) # get price etc.
-    [print(patch) for patch in completed_patch_data]
 
     if len(completed_patch_data) > 0:
         print("New Patches!")
+        # [print(patch) for patch in completed_patch_data]
         for patch in completed_patch_data:
             embed = create_patch_embed(patch)
             await client.get_channel(channel_id).send(embed=embed)
 
-async def request_patch_data() -> list:
-    """
-    Get patch data from URL and convert it from XML to python dictionary.
-    Then navigate to the data needed before returning the list of patches.
-    """
-    PATCH_FEED_URL = 'https://merkattu.fi/tuote-osasto/haalarimerkit/feed/'
-    raw_data = {}
+def request_patch_data() -> list:
+    """Get patch data from URL and convert it from XML to python dictionary.
+    Then navigate to the data needed before returning the list of patches."""
     try:
-        r = requests.get(PATCH_FEED_URL)
+        r = requests.get('https://merkattu.fi/tuote-osasto/haalarimerkit/feed/')
         raw_data = xmltodict.parse(r.text)
         # navigate to the patch list
         raw_data = raw_data['rss']['channel']['item']
@@ -56,9 +50,6 @@ async def request_patch_data() -> list:
 def parse_data(raw_data: list) -> list:
     """Go through the patches in the list and create
     a list of dataclasses"""
-    # convert each patch from OrderedDict to normal dictionary
-    raw_data = [dict(x) for x in raw_data]
-
     def create_patch_object(item):
         """Helper function for converting patches to dataclasses."""
         try:
@@ -70,6 +61,8 @@ def parse_data(raw_data: list) -> list:
         except Exception as e:
             detailed_exc_msg(e)
 
+    # convert each patch from OrderedDict to normal dictionary
+    raw_data = [dict(x) for x in raw_data]
     parsed_data = [create_patch_object(item) for item in raw_data]
     return parsed_data
 
