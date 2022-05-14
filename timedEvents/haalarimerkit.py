@@ -101,6 +101,7 @@ def request_additional_data(patch_data: list) -> list:
     return completed_patch_data
 
 def create_patch_embed(patch: Patch):
+    """Create fields etc. for the final embed message that will be sent on Discord."""
     title = patch.name
     price = patch.price
     web_link = patch.link
