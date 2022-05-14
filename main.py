@@ -37,6 +37,7 @@ async def change_bot_status():
         types = {
             'WATCHING': discord.ActivityType.watching,
             'LISTENING': discord.ActivityType.listening,
+            'COMPETING': discord.ActivityType.competing,
         }
         activity = discord.Activity(
             type = types[selected_activity['type']],
