@@ -11,7 +11,7 @@ import commandHandler
 import databaseHandler as db
 from utils import detailed_exc_msg
 
-def get_last_check_date():
+def get_last_check_date() -> datetime:
     """Get date of last event/patch check.
     Used to check for new events and patches."""
     raw_date = db.readTable('database')['lastEventLoopDateCheck']
@@ -19,7 +19,7 @@ def get_last_check_date():
     raw_date = raw_date.split('.')[0]
     return datetime.strptime(raw_date, '%Y-%m-%d %H:%M:%S')
 
-async def change_bot_status():
+async def change_bot_status() -> None:
     """Get the list of possible activities containing various games, songs etc.
     and set one of them as the status."""
     # get and select a status by random
@@ -46,7 +46,7 @@ async def change_bot_status():
         await client.change_presence(activity=activity)
 
 @tasks.loop(hours=1.0)
-async def timed_event_loop():
+async def timed_event_loop() -> None:
     """Function that is automatically ran every one hour. Contains
     calls for the patch and event systems and bot status/presence change."""
     print(f"[{datetime.strftime(datetime.now(), '%H:%M')}] Timed Events")
