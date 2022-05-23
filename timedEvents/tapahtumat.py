@@ -31,6 +31,63 @@ class Event:
     sales_ongoing: bool = field(repr=False)
     sales_paused: bool = field(repr=False)
 
+    def format_date(self, date_format: str = '%d.%m.%Y, %H:%M') -> str:
+        """Format and return date depending on whether
+        the event is a single day event.
+
+        Method is automatically called and set to date_string property
+        when an instance is created, but it can also be called separately
+        with optional date_format string as an argument.
+        """
+        date_from = self.date_event_from
+        date_to = self.date_event_to
+
+        # if the event is a single day event, the format is:
+        # 25.05.2022, 17:30 - 18:30
+        if date_from.date() == date_to.date():
+            date = f"{date_from.strftime('%d.%m.%Y')}, {date_from.strftime('%H:%M')} - {date_to.strftime('%H:%M')}"
+        # otherwise go with
+        # 19.05.2022, 17:00 - 20.05.2022, 02:00
+        else:
+            _date_from = datetime.strftime(date_from, date_format)
+            _date_to = datetime.strftime(date_to, date_format)
+            date = f"{_date_from} - {_date_to}"
+
+        return date
+
+    date_string = property(format_date)
+
+    @property
+    def price_string(self) -> str:
+        """Format price in different ways depeding on various conditions such as
+        whether the event is free, if the sales have ended etc.
+        """
+        # default
+        price_str = str(event.price)
+
+        if event.sales_paused:
+            price_str = "**Myynti on tauolla** :pause_button:"
+        elif event.sales_ended:
+            price_str = "**Myynti on loppunut** :pensive:"
+        else:
+            if not event.price[0] or not event.price[1]:
+                min_price, max_price = 0, 0
+            else:
+                min_price = format(event.price[0]/100,'.2f')
+                max_price = format(event.price[1]/100,'.2f')
+
+            if min_price == max_price:
+                price_str = f":ticket: {min_price}€"
+            else:
+                price_str = f":ticket: {min_price}€ - {max_price}€"
+
+        # add ticket sale dates if tickets are still for sale
+        if not event.sales_ended:
+            date = format_date(event)
+            price_str += f"\n(Lippuja myydään {date})"
+
+        return price_str
+
 async def postNewEvents(client, channel_id: int, last_check_date: datetime) -> None:
     """Request a list of recently published events and, if there are any,
     generate and post an embed message on designated Discord channel."""
@@ -115,62 +172,13 @@ def get_accurate_addresses(event_list: list) -> list:
     new_event_list = [request_additional_data(event) for event in event_list]
     return event_list
 
-def format_price(event: Event) -> str:
-    """Format price in different ways depeding on various conditions such as
-    whether the event is free, if the sales have ended etc."""
-    # default
-    price = str(event.price)
-
-    if event.sales_paused:
-        price = "**Myynti on tauolla** :pause_button:"
-    elif event.sales_ended:
-        price = "**Myynti loppunut** :pensive:"
-    else:
-        if not event.price[0] or not event.price[1]:
-            min_price, max_price = 0, 0
-        else:
-            min_price = format(event.price[0]/100,'.2f')
-            max_price = format(event.price[1]/100,'.2f')
-
-        if min_price == max_price:
-            price = f":ticket: {min_price}€"
-        else:
-            price = f":ticket: {min_price}€ - {max_price}€"
-
-    # add ticket sale dates if tickets are still for sale
-    if not event.sales_ended:
-        date = format_date(event)
-        price += f"\n(Lippuja myydään {date})"
-
-    return price
-
-def format_date(event: Event, date_format: str = '%d.%m.%Y, %H:%M') -> str:
-    """Format date depending on whether the event is a single day event."""
-    date_from = event.date_event_from
-    date_to = event.date_event_to
-    # if the event is a single day event, the format is:
-    # 25.05.2022, 17:30 - 18:30
-    if date_from.date() == date_to.date():
-        date = f"{date_from.strftime('%d.%m.%Y')}, {date_from.strftime('%H:%M')} - {date_to.strftime('%H:%M')}"
-    # otherwise go with
-    # 19.05.2022, 17:00 - 20.05.2022, 02:00
-    else:
-        _date_from = datetime.strftime(date_from, date_format)
-        _date_to = datetime.strftime(date_to, date_format)
-        date = f"{_date_from} - {_date_to}"
-
-    return date
-
 def create_event_embed(event: Event):
     """Create fields etc. for the final embed message that will be sent on Discord."""
     title = event.name
     eventImageLink = f'https://portalvhdsp62n0yt356llm.blob.core.windows.net/bailataan-mediaitems/{event.media_filename}'
-    price = format_price(event)
-    date = format_date(event)
-
     fields = [
         { "name": "Hinta",
-            "value": f"{price}" },
+            "value": f"{event.price_string}" },
         { "name": "Järjestäjä",
             "value": f"{event.company_name}",
             "inline": True },
@@ -178,7 +186,7 @@ def create_event_embed(event: Event):
             "value": f"{event.place}",
             "inline": True },
         { "name": "Päivämäärä",
-            "value": f"{date}" },
+            "value": f"{event.date_string}" },
         { "name": "Linkki",
             "value": f"[Kide.app]({'https://kide.app/fi/events/' + event.id})" }
     ]
