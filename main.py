@@ -11,6 +11,8 @@ import commandHandler
 import databaseHandler as db
 from utils import detailed_exc_msg
 
+DEBUG_MODE = True
+
 def get_last_check_date() -> datetime:
     """Get date of last event/patch check.
     Used to check for new events and patches."""
@@ -52,6 +54,12 @@ async def timed_event_loop() -> None:
     print(f"[{datetime.strftime(datetime.now(), '%H:%M')}] Timed Events")
     await change_bot_status()
     try:
+        if DEBUG_MODE:
+            print(" >>>> Started in debug mode, posting on debug channel <<<<", end="\n\n")
+            channel_id = settings.debugChannelID
+        else:
+            channel_id = settings.notificationChannelID
+
         check_date = get_last_check_date()
         channel_id = settings.debugChannelID
         await tapahtumat.postNewEvents(client, channel_id, check_date)
