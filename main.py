@@ -53,6 +53,7 @@ async def timed_event_loop() -> None:
     calls for the patch and event systems and bot status/presence change."""
     print(f"[{datetime.strftime(datetime.now(), '%H:%M')}] Timed Events")
     await change_bot_status()
+    # print(f" >> Changed Bot Status: {client}")
     try:
         if DEBUG_MODE:
             print(" >>>> Started in debug mode, posting on debug channel <<<<", end="\n\n")
@@ -61,8 +62,9 @@ async def timed_event_loop() -> None:
             channel_id = settings.notificationChannelID
 
         check_date = get_last_check_date()
-        channel_id = settings.debugChannelID
+        print(" >> Checking for new events...")
         await tapahtumat.postNewEvents(client, channel_id, check_date)
+        print(" >> Checking for new patches...")
         await haalarimerkit.postNewPatches(client, channel_id, check_date)
 
     except Exception as e:
@@ -70,6 +72,9 @@ async def timed_event_loop() -> None:
 
     finally:
         db.writeTable('database', {'lastEventLoopDateCheck': datetime.now()})
+        print(" >> Saved current date to database.")
+
+    print("<<< Timed Events completed")
 
 # ------- MAIN ---------
 client = discord.Client()
