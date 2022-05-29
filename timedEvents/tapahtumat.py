@@ -63,18 +63,18 @@ class Event:
         whether the event is free, if the sales have ended etc.
         """
         # default
-        price_str = str(event.price)
+        price_str = str(self.price)
 
-        if event.sales_paused:
+        if self.sales_paused:
             price_str = "**Myynti on tauolla** :pause_button:"
-        elif event.sales_ended:
+        elif self.sales_ended:
             price_str = "**Myynti on loppunut** :pensive:"
         else:
-            if not event.price[0] or not event.price[1]:
+            if not self.price[0] or not self.price[1]:
                 min_price, max_price = 0, 0
             else:
-                min_price = format(event.price[0]/100,'.2f')
-                max_price = format(event.price[1]/100,'.2f')
+                min_price = format(self.price[0]/100,'.2f')
+                max_price = format(self.price[1]/100,'.2f')
 
             if min_price == max_price:
                 price_str = f":ticket: {min_price}€"
@@ -82,8 +82,8 @@ class Event:
                 price_str = f":ticket: {min_price}€ - {max_price}€"
 
         # add ticket sale dates if tickets are still for sale
-        if not event.sales_ended:
-            date = format_date(event)
+        if not self.sales_ended:
+            date = self.format_date()
             price_str += f"\n(Lippuja myydään {date})"
 
         return price_str
