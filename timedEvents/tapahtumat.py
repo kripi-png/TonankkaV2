@@ -148,6 +148,7 @@ def parse_data(raw_data: list) -> list:
             print(f"Error while parsing event: {event_data['name']}")
             print(f"KeyError: {e=}")
         except Exception as e:
+            print(f"Error while parsing event: {event_data['name']}")
             detailed_exc_msg(e)
 
     parsed_data = [create_event_object(event) for event in raw_data]
