@@ -83,8 +83,8 @@ def request_additional_data(patch_data: list) -> list:
             price = soup.find('meta', attrs={'property': 'product:price:amount'})['content']
             image_link = soup.find('meta', attrs={'property': 'og:image'})['content']
             desc_elem_list = soup.select('#tab-description > .post-content > p')
-            # if patch has multiple paragraphs in its description, combine them
-            description = '\n'.join([x.text for x in desc_elem_list])
+            # get text from first element
+            description = desc_elem_list[0].text
 
             # set needed info
             patch.price = price
