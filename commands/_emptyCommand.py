@@ -1,5 +1,6 @@
 async def uusiKomento(msg, args):
     # await msg.channel.send("Hello!")
+    pass
 
 
 commandData = {
